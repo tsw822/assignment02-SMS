@@ -83,6 +83,7 @@ module.exports = class LockDownEssentials extends Order{
                 }
                 aReturn.push(`Your total comes to ${this.nTotal}`);
                 aReturn.push(`We will text you from 519-222-2222 when your order is ready or if we have questions.`)
+                this.isDone(true);
                 break;
         }
         return aReturn;
