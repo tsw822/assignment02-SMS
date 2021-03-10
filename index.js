@@ -11,7 +11,7 @@ server.listen(port, function () {
   console.log("Server listening at port %d", port);
 });
 
-const ShwarmaOrder = require("./ShawarmaOrder");
+const LockDownEssentials = require("./LockDownEssentials");
 const e = require('express');
 const { exception } = require('console');
 
@@ -60,7 +60,7 @@ app.post("/sms", (req, res) => {
   let sFrom = req.body.From || req.body.from;
   let sUrl = `${req.headers['x-forwarded-proto'] || req.protocol}://${req.headers['x-forwarded-host'] || req.headers.host}${req.baseUrl}`;
   if (!oOrders.hasOwnProperty(sFrom)) {
-    oOrders[sFrom] = new ShwarmaOrder(sFrom, sUrl);
+    oOrders[sFrom] = new LockDownEssentials(sFrom, sUrl);
   }
   if (oOrders[sFrom].isDone()) {
     delete oOrders[sFrom];
