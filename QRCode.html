@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title class="title">Payment</title>
+</head>
+<body>
+    <h1 class="title">You have completed your payment</h1>
+    <p>Your order will be sent to</p>
+    <p name="buyerName" id="buyerName">Name Here</p>
+    <p name="address" id="address">Address Here</p>
+    <p>Order QR Code is below, please keep that for receiving your order</p>
+    <div id="placeHolder"></div>
+    <script type="text/javascript" src="qrcode.js"></script>
+    <script>
+        var typeNumber = 5
+        var errorCorrectionLevel = 'L';
+        var qr = qrcode(typeNumber, errorCorrectionLevel);
+        qr.addData('5V9681308E5931835');
+        qr.make();
+        document.getElementById('placeHolder').innerHTML = qr.createImgTag();
+    </script>
+</body>
