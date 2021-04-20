@@ -5,11 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch via NPM",
+            "cwd":"${workspaceFolder}",
+            "request": "launch",
+            "runtimeArgs": [
+                "start"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "env": {"SB_CLIENT_ID":
+                "AY4m-tvvApkzaeRjSTuvRbfZgGWuGciNfyQB5R4YdvuafH72YrlyzXt_VFU6Wc5IEelCNpCO76GUxbPq"}
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
             "program": "${file}",
-            "console":"integratedTerminal"
+            "console":"integratedTerminal",
+            "args": []
+            
         }
     ]
 }

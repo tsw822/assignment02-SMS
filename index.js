@@ -30,11 +30,12 @@ let oOrders = {};
 let resScope;
 
 app.post("/payment/", (req, res) => {
+  console.log(req.body);
   var total = req.body.total;
   var orderId = req.body.orderId;
   var phone = req.body.phone;
 
-  console.log(total,orderId,phone);
+  // console.log(req.body);
   function renderForm(){
     // your client id should be kept private
     const sClientID = process.env.SB_CLIENT_ID || 'put your client id here for testing ... Make sure that you delete it before committing'
@@ -98,21 +99,23 @@ app.post("/payment/:phone", (req, res) => {
   const aReply = oOrders[sFrom].handleInput(req.body);
   const oSocket = oSockets[sFrom];
   // send messages out of turn
+  if (oSocket) {
   for (let n = 0; n < aReply.length; n++) {
-    if (oSocket) {
-      const data = {
-        message: aReply[n]
-      };
-      oSocket.emit('receive message', data);
-    } else {
+      oSocket.emit('receive message', {
+                    message: aReply[n]
+                    });
+    }
+  } else 
+    {
       throw new Exception("twilio code would go here");
     }
-  }
+ 
+
   if (oOrders[sFrom].isDone()) {
     delete oOrders[sFrom];
     delete oSockets[sFrom];
   }
-  res.end("ok");
+  res.end();
 });
 
 app.get("/payment/:phone", (req, res) => {
@@ -200,7 +203,7 @@ app.get("/QRCode/",(req,res)=>{
       </body>
       `);  
     }
-    paymentDetailReq=null;
+    // paymentDetailReq=null;
     res.end(renderQRCode());
 }
   else{
@@ -210,16 +213,58 @@ app.get("/QRCode/",(req,res)=>{
 });
 
 
-app.get("/QRCode/:phone",(req,res)=>{
-  const sFrom = req.params.phone;
+app.get("/qrcode/:phone",(req,res)=>{
+  sPhone = req.params.phone;
+  function renderQRCode(){
+    return(`
+    <!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title class="title">Payment</title>
+        <script type="text/javascript" src="/qrcode.js"></script>
+    </head>
+    <body>
+        <h1 class="title">You have completed your payment</h1>
+        <p>Order QR Code is below, please keep that for receiving your order</p>
+        <div id="placeHolder"></div>
+        <script>
+            var typeNumber = 5;
+            var errorCorrectionLevel = 'L';
+            var qr = qrcode(typeNumber, errorCorrectionLevel);
+            qr.addData('${sPhone}');
+            qr.make();
+            document.getElementById('placeHolder').innerHTML = qr.createImgTag();
+        </script>
+    </body>
+    `);  
+  }
+  res.end(renderQRCode());
+
+  // console.log(oOrders); 
+  // console.log(req.body);
+  // const sFrom = req.params.phone;
   // if (!oOrders.hasOwnProperty(sFrom)) {
   //   res.end("order already complete");
   // } else {
   //   res.end(oOrders[sFrom].renderForm());
   // }
-    // paymentDetailReq=null;
-    res.end(oOrders[sFrom].renderQRCode());
 });
+
+app.post("/test",(req,res)=>{
+  const socket = oSockets["SGwpLd1OkF"];
+  // console.log(socket);
+  for (let index = 0; index < 5; index++) {
+        socket.emit('receive message', {
+          message: "ok"
+      });
+    
+  }
+  res.end();
+})
 
 io.on('connection', function (socket) {
   // when the client emits 'receive message', this listens and executes

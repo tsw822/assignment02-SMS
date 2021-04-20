@@ -108,6 +108,8 @@ module.exports = class PopupMealEssentials extends Order{
                 let d = new Date(); 
                 d.setMinutes(d.getMinutes() + 20);
                 aReturn.push(`Please pick it up at ${d.toTimeString()} for ${name} to ${address}`);
+                aReturn.push(`Please check and save QR Code below for receiving your order.`);
+                aReturn.push(`${this.sUrl}/qrcode/${this.sNumber}/`);
                 aReturn.push(`We will text you from 519-222-2222 when your order is ready or if we have questions.`)
                 break;
         }
