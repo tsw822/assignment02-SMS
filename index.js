@@ -15,10 +15,8 @@ const PopupMealEssentials = require("./PopupMealEssentials");
 const e = require('express');
 const { exception } = require('console');
 
-// var id="12345A";
-// var name = "Test";
-// var address = "test address";
 var paymentDetailReq = null;
+var phone = "";
 
 // Create a new express application instance
 
@@ -32,8 +30,7 @@ let resScope;
 app.post("/payment/", (req, res) => {
   console.log(req.body);
   var total = req.body.total;
-  var orderId = req.body.orderId;
-  var phone = req.body.phone;
+  phone = req.body.phone;
 
   // console.log(req.body);
   function renderForm(){
@@ -187,7 +184,7 @@ app.get("/QRCode/",(req,res)=>{
       </head>
       <body>
           <h1 class="title">You have completed your payment</h1>
-          <p>Your order will be sent to</p>
+          <p>Your order ${id} will be sent to</p>
           <p name="buyerName" id="buyerName"> ${name}</p>
           <p name="address" id="address">${address}</p>
           <p>Order QR Code is below, please keep that for receiving your order</p>
@@ -196,10 +193,30 @@ app.get("/QRCode/",(req,res)=>{
               var typeNumber = 5;
               var errorCorrectionLevel = 'L';
               var qr = qrcode(typeNumber, errorCorrectionLevel);
-              qr.addData('${id}');
+              qr.addData('${phone}');
               qr.make();
               document.getElementById('placeHolder').innerHTML = qr.createImgTag();
           </script>
+          <div id="docs"></div>
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/pouchdb/7.2.2/pouchdb.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script> 
+          <script type="text/javascript">
+              const db = new PouchDB('urls');
+              const sUrl1 = "https://localhost:3002";
+              const sOId = "${id}";
+              const sOName = "${name}";
+              const doc1 = { _id: sOId, name:sOName};
+              const aUrls = [doc1];
+      
+              db.bulkDocs(aUrls).then((res) => {
+      
+                  console.log("Documents inserted OK");
+              }).catch(() => {
+                  console.error(err);
+              });
+          </script>
+          
       </body>
       `);  
     }
